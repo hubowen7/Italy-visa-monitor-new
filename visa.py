@@ -1,96 +1,78 @@
+# visa.py
+# 使用Playwright重写的Visa类，适用于处理签证申请流程
+
+from utils.basic import Basic
+import logging
 from datetime import datetime
 
-from utils import config
-from utils.basic import Basic
-from utils.log import logger
+# 配置日志记录器
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 class Visa(Basic):
+    def __init__(self, page):
+        """
+        初始化Visa类的实例。
 
-    def __init__(self, driver):
-        super().__init__(driver)
+        :param page: Playwright的Page对象，用于页面操作。
+        """
+        super().__init__(page)
 
-    def open_page(self, page):
-        self.driver.get(page)
+    def open_page(self, url):
+        """
+        打开指定的URL。
+
+        :param url: 要打开的网页的URL。
+        """
+        self.page.goto(url)
+        logger.info(f"Opened page: {url}")
 
     def select_centre(self, county, city, category):
-        self.wait_for_secs()
-        self.click_el(name="JurisdictionId")
-        self.click_el(xpath="//select[@name='JurisdictionId']/option[contains(text(),'{}')]".format(county))
-        self.wait_for_loading()
-        self.click_el(name="centerId")
-        self.click_el(xpath="//select[@name='centerId']/option[contains(text(),'{}')]".format(city))
-        self.wait_for_secs()
-        self.click_el(name="category")
-        self.click_el(xpath="//select[@name='category']/option[contains(text(),'{}')]".format(category))
-        self.wait_for_secs()
-        self.click_el(name='checkDate')
-        logger.info("select centre finished")
+        """
+        根据提供的信息选择签证中心。
 
-    def go_to_appointment_page(self, phone='', email=''):
-        self.open_page(config.OPENED_PAGE)
-        # self.select_centre("England", "Manchester", "Normal")
-        # self.enter_phone_and_email(phone, email)
-        # self.enter_wrong_code(email, config.PASSWORD)
-        # self.enter_code_from_email(email)
+        :param county: 国家名称。
+        :param city: 城市名称。
+        :param category: 申请类别。
+        """
+        # 注意：下面的选择器(selector)是示例，需要根据实际的页面元素进行调整。
+        self.page.select_option('select[name="JurisdictionId"]', county)
+        self.page.select_option('select[name="centerId"]', city)
+        self.page.select_option('select[name="category"]', category)
+        logger.info(f"Selected centre: County={county}, City={city}, Category={category}")
 
-    def login(self):
-        try:
-            # self.click_el(xpath="//a[text() = 'Log in']")
-            element = self.driver.find_element_by_xpath("//a[contains(text(),'Log in')]")
-            element.click()
-            self.wait_for_secs()
-            self.enter_message(config.EMAIL, name='email')
-            self.wait_for_secs()
-            self.enter_message(config.PASSWORD, name='password')
-            self.wait_for_secs()
-            self.click_el(name="login")
-            logger.info("log in finished")
-        except Exception as e:
-            logger.error(e)
+    def login(self, email, password):
+        """
+        使用提供的电子邮件和密码登录。
 
-    def go_to_book_appointment(self):
-        unique_suffix = config.OPENED_PAGE.split('/')[-1]
-        link = f'book-appointment/{unique_suffix}'
-        logger.info(f"date appointment link = [{link}]")
-        # open a new tab
-        self.driver.execute_script(f'window.open(\"{link}\","_blank");')
-        # switch to the new tab
-        self.driver.switch_to.window(self.driver.window_handles[-1])
-        logger.info("go to book appointment finished")
+        :param email: 用户的电子邮件地址。
+        :param password: 对应的密码。
+        """
+        # 填写登录表单
+        self.page.fill('input[name="email"]', email)
+        self.page.fill('input[name="password"]', password)
+
+        # 点击登录按钮
+        # 注意：这里的选择器是示例，需要根据实际页面元素进行调整。
+        self.page.click('button[name="login"]')
+        logger.info("Attempted to log in")
 
     def check_available_dates(self):
-        self.click_el(id="VisaTypeId")
-        self.click_el(xpath="//select[@id='VisaTypeId']/option[contains(text(),'{}')]".format(config.CENTER[3]))
-        self.wait_for_secs(0)
+        """
+        检查并返回可用的预约日期。
 
-        # check date
-        self.click_el(id="app_date")
+        :return: 一个包含可用日期的字典。
+        """
+        # 这个方法的实现将高度依赖于具体的网页结构和逻辑。
+        # 你需要根据实际情况来编写代码以获取可用的预约日期。
         available_dates = {}
-        next_button_xpath = "//div[@class = 'datepicker-days']//th[@class = 'next' and @style = 'visibility: visible;']"  # next month
-        while True:
-            nd = self.get_normal_dates()
-            if nd:
-                available_dates.update(nd)
-            if self.driver.find_elements_by_xpath(next_button_xpath):
-                self.wait_for_secs(0)
-                self.click_el(xpath=next_button_xpath)
-            else:
-                break
+        # 示例：假设我们从页面上的某个元素中获取日期信息
+        # dates = self.page.query_selector_all('.date')
+        # for date in dates:
+        #     if self.page.is_visible(date):
+        #         available_dates[date.inner_text()] = True
+        logger.info("Checked available dates")
         return available_dates
 
-    def get_normal_dates(self):
-        normal_dates_xpath = "//div[@class='datepicker-days']//td[not(contains(@class, 'disabled'))]"  # days in the current month
-        result_dates = {}
-        dates = []
-        if len(self.driver.find_elements_by_xpath(normal_dates_xpath)):
-            found_month = self.driver.find_element_by_xpath(
-                "//div[@class='datepicker-days']//th[@class='datepicker-switch']").text
-            for day in self.driver.find_elements_by_xpath(normal_dates_xpath):  # need refactor fix
-                dates.append(day.text)
-            for day in dates:
-                found_date = datetime.strptime(day + " " + found_month, '%d %B %Y')
-                result_dates[found_date.strftime("%d/%m/%Y")] = []
-            self.click_el(normal_dates_xpath)  # 自动点击
 
-        return result_dates

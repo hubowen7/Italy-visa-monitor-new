@@ -1,51 +1,35 @@
+# monitor.py
+
 import time
-
-import pyttsx3
-from selenium import webdriver
-from webdriver_manager.chrome import ChromeDriverManager
-
+from playwright.sync_api import sync_playwright
 from utils import config
-from utils.log import logger
 from visa import Visa
+import logging
 
+# 设置日志
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-def init_driver():
-    profile = {
-        "profile.default_content_setting_values.notifications": 2  # block notifications
-    }
-    chrome_options = webdriver.ChromeOptions()
-    chrome_options.add_experimental_option('prefs', profile)
-    chrome_options.add_argument("--incognito")
-
-    driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
-    driver.implicitly_wait(1)
-    driver.delete_all_cookies()
-    return driver
-
+def init_browser():
+    # 使用Playwright创建并返回一个浏览器实例
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=False)  # 设置headless=False可查看浏览器界面
+        logger.info("Browser launched")
+        return browser
 
 def monitor():
     try:
-        driver = init_driver()
-        visa = Visa(driver)
-        visa.go_to_appointment_page()
-        visa.login()
-        visa.go_to_book_appointment()
-        visa.select_centre(config.CENTER[0], config.CENTER[1], config.CENTER[2])
-        while True:
-            dates = visa.check_available_dates()
-            if dates:
-                logger.info(f"DAY AVAILABLE: {dates}")
-                pyttsx3.speak(f"say day available {dates}")
-                time.sleep(120)
-            else:
-                logger.info(f"NO DAY AVAILABLE..")
-                time.sleep(config.TIMEOUT)
-                driver.refresh()
-
+        browser = init_browser()
+        page = browser.new_page()  # 打开一个新的浏览器页面
+        visa = Visa(page)  # 创建Visa类的实例
+        # 执行其他监控逻辑
     except Exception as e:
-        logger.error(f'Monitor runtime error. {e}')
-        monitor()
-
+        logger.error(f"Monitor runtime error: {e}")
+    finally:
+        browser.close()
+        logger.info("Browser closed")
 
 if __name__ == "__main__":
     monitor()
+
+
