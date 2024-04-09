@@ -1,9 +1,13 @@
-# =============== GENERAL SETTINGS ===============
-TIMEOUT = 90  # refresh page every 90s
+# utils/config.py
 
-# =============== VISA CENTER SELECTION ===============
+# 刷新页面的时间间隔（秒）
+TIMEOUT = 90
+
+# 签证中心选择配置
 CENTER = ('England', 'Manchester', 'Normal', 'Tourism')
-# =============== PERSONAL CONFIG FOR VISA ===============
-OPENED_PAGE = 'https://visa.vfsglobal.com/chn/zh/ita/login'  # your BLS appointment page link
-EMAIL = 'noooleee@163.com'  # BLS email
-PASSWORD = 'Chu19981007!'  # BLS password
+
+# 个人签证配置信息
+OPENED_PAGE = 'https://visa.vfsglobal.com/chn/zh/ita/login'
+EMAIL = 'noooleee@163.com'
+PASSWORD = 'Chu19981007!m'
+

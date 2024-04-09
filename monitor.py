@@ -1,35 +1,39 @@
-# monitor.py
-
-import time
-from playwright.sync_api import sync_playwright
+# visa.py
+from utils.basic import Basic
 from utils import config
-from visa import Visa
 import logging
+import time
 
 # 设置日志
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-def init_browser():
-    # 使用Playwright创建并返回一个浏览器实例
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False)  # 设置headless=False可查看浏览器界面
-        logger.info("Browser launched")
-        return browser
+class Visa(Basic):
+    def login(self):
+        """
+        登录到签证申请网站。
+        """
+        self.navigate(config.OPENED_PAGE)
+        self.enter_message('input[name="email"]', config.EMAIL)
+        self.enter_message('input[name="password"]', config.PASSWORD)
+        # 假设登录按钮的选择器为'button[name="login"]'
+        self.click_el('button[name="login"]')
+        logger.info("Attempted to log in")
 
-def monitor():
-    try:
-        browser = init_browser()
-        page = browser.new_page()  # 打开一个新的浏览器页面
-        visa = Visa(page)  # 创建Visa类的实例
-        # 执行其他监控逻辑
-    except Exception as e:
-        logger.error(f"Monitor runtime error: {e}")
-    finally:
-        browser.close()
-        logger.info("Browser closed")
+    def select_centre(self):
+        """
+        根据config.py中的配置选择签证中心。
+        """
+        # 填充相应的选择逻辑
+        logger.info(f"Selected centre: {config.CENTER}")
 
-if __name__ == "__main__":
-    monitor()
+    def check_available_dates(self):
+        """
+        点击页面上的“检查日期”按钮来查看是否有可用日期。
+        """
+        # 此处需要根据实际情况填充选择器
+        self.click_el('button[name="checkDate"]')
+        logger.info("Checked available dates")
+
 
 
