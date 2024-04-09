@@ -11,14 +11,31 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 class Visa(Basic):
     def login(self):
         """
-        登录到签证申请网站。
+        登录到签证申请网站，模拟真人行为。
         """
         self.navigate(config.OPENED_PAGE)
-        self.enter_message('input[name="email"]', config.EMAIL)
-        self.enter_message('input[name="password"]', config.PASSWORD)
-        # 假设登录按钮的选择器为'button[name="login"]'
-        self.click_el('button[name="login"]')
+        # 等待邮箱输入框加载
+        self.wait_for_loading('#mat-input-0')
+        # 慢慢输入邮箱，假设每个字符之间延迟为100毫秒
+        self.type_text('#mat-input-0', config.EMAIL, 100)
+        # 慢慢输入密码，同样每个字符之间延迟为100毫秒
+        self.type_text('#mat-input-1', config.PASSWORD, 100)
+        # 假设在点击登录按钮前等待一段时间，比如2秒，来模拟真人的行为
+        time.sleep(2)
+        # 点击登录按钮
+        self.click_el('body > app-root > div > div > app-login > section > div > div > mat-card > form > button > span.mat-button-wrapper')
         logger.info("Attempted to log in")
+
+    def type_text(self, selector, text, delay):
+        """
+        在指定元素中慢慢输入文本。
+        :param selector: 页面元素的选择器。
+        :param text: 要输入的文本。
+        :param delay: 输入每个字符之间的延迟（毫秒）。
+        """
+        for char in text:
+            self.page.type(selector, char, delay=delay)
+        logger.info(f"Typed text into element {selector}: {text}")
 
     def select_centre(self):
         """
