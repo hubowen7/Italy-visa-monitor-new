@@ -1,39 +1,32 @@
 # monitor.py
 from playwright.sync_api import sync_playwright
 from visa import Visa
-from utils import config
 import time
-import logging
-
-# 设置日志
-logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 def run_monitor():
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False)  # 使用非无头模式以便于观察浏览器操作
-        page = browser.new_page()
+        # 使用存储的登录状态来启动浏览器上下文
+        browser = p.chromium.launch(headless=False)
+        # 加载登录状态
+        context = browser.new_context(storage_state="visa.vfsglobal.com.json")
+        page = context.new_page()
 
+        # 创建Visa类的实例，并执行自动化操作
         visa = Visa(page)
-        visa.login()  # 执行登录操作
+        # 调用Visa类中定义的方法，例如：
         visa.select_centre()  # 选择签证中心
-
         while True:
-            try:
-                visa.check_available_dates()  # 检查可用日期
-                time.sleep(180)  # 每3分钟检查一次
-            except KeyboardInterrupt:
-                logger.info("Monitoring stopped by user.")
-                break
-            except Exception as e:
-                logger.error(f"Error during monitoring: {e}")
+            visa.check_available_dates()  # 检查可用日期
+            time.sleep(180)  # 每3分钟检查一次
 
+        # 任务完成后关闭浏览器
         browser.close()
 
 
 if __name__ == '__main__':
     run_monitor()
+
 
 
 
