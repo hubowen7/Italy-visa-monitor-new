@@ -1,35 +1,51 @@
-# basic.py
-# Playwright版本的基础操作类
-
-from playwright.sync_api import sync_playwright
+# utils/basic.py
+from utils import config
 import logging
 
-# 设置日志
+# 初始化日志记录器
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class Basic:
     def __init__(self, page):
-        self.page = page  # Playwright的页面对象
+        """
+        初始化基础页面操作类。
+        :param page: Playwright页面对象。
+        """
+        self.page = page
 
-    def click_el(self, selector):
-        """点击页面上的元素"""
-        self.page.click(selector)
-        logger.info(f"Clicked on element: {selector}")
+    async def click_el(self, selector):
+        """
+        点击指定选择器的元素。
+        :param selector: 页面元素的选择器。
+        """
+        await self.page.click(selector)
+        logger.info(f"Clicked element: {selector}")
 
-    def wait_for_loading(self, selector):
-        """等待元素加载完成"""
-        self.page.wait_for_selector(selector, state="attached")
+    async def wait_for_loading(self, selector):
+        """
+        等待元素加载。
+        :param selector: 页面元素的选择器。
+        """
+        await self.page.wait_for_selector(selector)
         logger.info(f"Element loaded: {selector}")
 
-    def enter_message(self, message, selector):
-        """在指定元素中输入信息"""
-        self.page.fill(selector, message)
-        logger.info(f"Entered message on element {selector}: {message}")
+    async def enter_message(self, selector, message):
+        """
+        在指定元素中输入文本。
+        :param selector: 页面元素的选择器。
+        :param message: 要输入的文本。
+        """
+        await self.page.fill(selector, message)
+        logger.info(f"Entered text into element {selector}: {message}")
 
-    def wait_for_secs(self, secs=1):
-        """等待指定的秒数"""
-        self.page.wait_for_timeout(secs * 1000)  # Playwright中的等待时间以毫秒为单位
-        logger.info(f"Waited for {secs} seconds")
+    async def navigate(self, url):
+        """
+        导航到指定URL。
+        :param url: 网址。
+        """
+        await self.page.goto(url)
+        logger.info(f"Navigated to {url}")
+
 
 
