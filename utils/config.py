@@ -7,7 +7,6 @@ TIMEOUT = 90
 CENTER = ('England', 'Manchester', 'Normal', 'Tourism')
 
 # 个人签证配置信息
-OPENED_PAGE = 'https://visa.vfsglobal.com/chn/zh/ita/login'
-EMAIL = 'noooleee@163.com'
-PASSWORD = 'Chu19981007!m'
+OPENED_PAGE = 'https://visa.vfsglobal.com/chn/zh/ita/dashboard'
+
 

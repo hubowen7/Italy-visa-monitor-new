@@ -42,8 +42,6 @@
     
     # 签证中心一共有三个。都写在了config.py中。默认曼城。如果需要改为其他城市，请注释掉曼城那一行，并解除注释你需要的签证中心那一行。
     CENTER = ('England', 'Manchester', 'Normal', 'Tourism')
-    # CENTER = ('Scotland', 'Edinburgh', 'Normal', 'Tourism')
-    # CENTER = ('Bristol', 'London', 'Normal', 'Tourist')
  
      # 必改，下面两项为你登陆BLS的账号密码
      EMAIL = 'xxx' 
