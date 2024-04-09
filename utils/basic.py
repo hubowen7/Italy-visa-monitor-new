@@ -14,37 +14,37 @@ class Basic:
         """
         self.page = page
 
-    async def click_el(self, selector):
+    def click_el(self, selector):
         """
         点击指定选择器的元素。
         :param selector: 页面元素的选择器。
         """
-        await self.page.click(selector)
+        self.page.click(selector)
         logger.info(f"Clicked element: {selector}")
 
-    async def wait_for_loading(self, selector):
+    def wait_for_loading(self, selector):
         """
         等待元素加载。
         :param selector: 页面元素的选择器。
         """
-        await self.page.wait_for_selector(selector)
+        self.page.wait_for_selector(selector)
         logger.info(f"Element loaded: {selector}")
 
-    async def enter_message(self, selector, message):
+    def enter_message(self, selector, message):
         """
         在指定元素中输入文本。
         :param selector: 页面元素的选择器。
         :param message: 要输入的文本。
         """
-        await self.page.fill(selector, message)
+        self.page.fill(selector, message)
         logger.info(f"Entered text into element {selector}: {message}")
 
-    async def navigate(self, url):
+    def navigate(self, url):
         """
         导航到指定URL。
         :param url: 网址。
         """
-        await self.page.goto(url)
+        self.page.goto(url)
         logger.info(f"Navigated to {url}")
 
 

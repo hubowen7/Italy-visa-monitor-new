@@ -16,7 +16,6 @@ def run_monitor():
         page = browser.new_page()
 
         visa = Visa(page)
-        visa.navigate(config.OPENED_PAGE)  # 打开签证申请页面
         visa.login()  # 执行登录操作
         visa.select_centre()  # 选择签证中心
 
