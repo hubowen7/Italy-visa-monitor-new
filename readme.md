@@ -14,7 +14,7 @@
  ```text
  .
  ├── monitor.py         # starter
- ├── visa.py            # modify xpath for UK BLS
+ ├── visa.py            # modify xpath for Beijing BLS
  ├── utils
  │   ├── basic.py       
  │   ├── config.py      # configuration, you have to change this file!
