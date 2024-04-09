@@ -14,14 +14,15 @@ class Visa(Basic):
         登录到签证申请网站，模拟真人行为。
         """
         self.navigate(config.OPENED_PAGE)
+        time.sleep(10)
         # 等待邮箱输入框加载
         self.wait_for_loading('#mat-input-0')
-        # 慢慢输入邮箱，假设每个字符之间延迟为100毫秒
-        self.type_text('#mat-input-0', config.EMAIL, 100)
-        # 慢慢输入密码，同样每个字符之间延迟为100毫秒
-        self.type_text('#mat-input-1', config.PASSWORD, 100)
-        # 假设在点击登录按钮前等待一段时间，比如2秒，来模拟真人的行为
-        time.sleep(2)
+        # 慢慢输入邮箱，假设每个字符之间延迟为1000毫秒
+        self.type_text('#mat-input-0', config.EMAIL, 1000)
+        # 慢慢输入密码，同样每个字符之间延迟为1000毫秒
+        self.type_text('#mat-input-1', config.PASSWORD, 1000)
+        # 假设在点击登录按钮前等待一段时间，比如1秒，来模拟真人的行为
+        time.sleep(1)
         # 点击登录按钮
         self.click_el('body > app-root > div > div > app-login > section > div > div > mat-card > form > button > span.mat-button-wrapper')
         logger.info("Attempted to log in")

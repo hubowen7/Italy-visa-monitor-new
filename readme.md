@@ -18,8 +18,6 @@
  ├── utils
  │   ├── basic.py       
  │   ├── config.py      # configuration, you have to change this file!
- │   ├── decorators.py
- │   └── log.py
  ├── requirements.txt   # pip install -r requirements.txt
  └── readme.md
  ```
