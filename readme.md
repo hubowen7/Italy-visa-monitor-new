@@ -1,4 +1,5 @@
  ## 意大利签证位置监听 (base北京领区)
+ 项目还处于开发阶段，功能咱不齐全，不建议clone～
  ### 一、简介
  项目是来源于[vxwong/spain-visa-monitor](https://github.com/vxwong/spain-visa-monitor) ，针对北京领区和意大利使馆做了一版。原作者已经强调“请不要拿来用作盈利用途，否则会追究责任。”
  
